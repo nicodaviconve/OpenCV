@@ -31,16 +31,6 @@ int main()
 	//namedWindow("image", WINDOW_NORMAL);
 	imshow("Display window", img); // Show our image inside it.
 	waitKey(2500);
-	//waitKey(0);
-	//Supponiamo che si voglia fare un resize dell'Immagine
-	//Andiamo ad utilizzare la funzione resize()
-	//Cloniamo prima l'immagine originale in un'altra matrice
-	/*
-	Mat imgRsz = img.clone();
-	resize(imgRsz, img, Size(640, 480));
-	namedWindow("Immagine Resize", WINDOW_AUTOSIZE);
-	imshow("Immagine Resize", imgRsz);
-	*/
 
 	//Supponiamo di voler ottenere le dimensioni dell'immagine
 	//Gli attributi rows e cols ci permettono di conoscere
@@ -49,7 +39,7 @@ int main()
 	cout << "Numero di righe dell'immagine: " << img.rows << endl;
 	cout << "Numero di colonne dell'immagine: " << img.cols << endl;
 
-	//waitKey(2500);
+	waitKey(2500);
 
 	//Supponiamo di voler convertire l'immagine da RGB a Scala di Grigi
 	//Usiamo la funzione cvtColor()
@@ -62,7 +52,7 @@ int main()
 
 	//imwrite("copy.jpg", imgGray, compression_params);
 
-	//waitKey(2500);
+	waitKey(2500);
 
 	// Create mat with alpha channel
 	Mat mat(480, 640, CV_8UC4);
@@ -70,6 +60,60 @@ int main()
 
 	try {
 		imwrite("copyBW.png", imgGray, compression_params);
+	}
+	catch (runtime_error& ex) {
+		fprintf(stderr, "Exception converting image to PNG format: %s\n", ex.what());
+		return 1;
+	}
+
+	fprintf(stdout, "Saved png file with alpha data.\n");
+	//waitKey(0);
+
+	//Mat imgTest = img.clone();
+	Mat imgTest = imread("copyBW.png");
+
+	cvtColor(imgTest, imgTest, int code, int dstCn = 0)
+	
+	for (int y = 0; y < imgTest.rows; y++)
+	{
+		for (int x = 0; x < imgTest.cols; x++)
+		{
+			// get pixel
+			Vec3b & color = imgTest.at<Vec3b>(y, x);
+
+			// ... do something to the color ....
+			if (color[0] == 0 && color[1] == 0 && color[2] == 0)
+			{
+				color[0] = 51;
+				color[1] = 0;
+				color[2] = 51;
+				//cout << "Pixel Black :" << x << "," << y << endl;
+			}
+			else if (color[0] == color[1] && color[2] == color[1] && color[1] != 255)
+			{
+				//color[0] = 51;
+				color[1] = 0;
+				//color[2] = 51;
+			}
+			// set pixel
+			imgTest.at<Vec3b>(Point(x,y)) = color;
+			//if you copy value
+		}
+	}
+
+	namedWindow("Immagine Test", WINDOW_AUTOSIZE);
+	imshow("Immagine Test", imgTest);
+
+	//imwrite("copy.jpg", imgGray, compression_params);
+
+	waitKey(2500);
+
+	// Create mat with alpha channel
+	Mat mat1(480, 640, CV_8UC4);
+	createAlphaMat(mat1);
+
+	try {
+		imwrite("copyMOD.png", imgTest, compression_params);
 	}
 	catch (runtime_error& ex) {
 		fprintf(stderr, "Exception converting image to PNG format: %s\n", ex.what());
